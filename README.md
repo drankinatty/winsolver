@@ -5,7 +5,7 @@ WinSolver is a simple but fast and capable linear system solver that is simply a
 
 The linear system solver uses Gauss-Jordan Elimination with full pivoting to solve a system of equations containing any number of unknowns up to the physical memory limits of your computer. See [Gaussian Elimination](https://en.wikipedia.org/wiki/Gaussian_elimination)
 
-This project is a rewrite of [GtkSolver Readme.md](https://github.com/drankinatty/gtksolver) to use a native Windows API interface for those running windows to eliminate the need to install Gtk+2.0 libraries and allow the program to run on any recent version of windows as a standalone program.
+This project is a rewrite of [GtkSolver](https://github.com/drankinatty/gtksolver) to use a native Windows API interface for those running windows to eliminate the need to install Gtk+2.0 libraries and allow the program to run on any recent version of windows as a standalone program.
 
 ### Solver Use
 
@@ -38,7 +38,7 @@ Clicking `[Help]` clears the buffer and redisplays the initial help message.
 
 ### Output
 
-Taking the contents of the second example above as the contents of the textview and clicking `[Solve...]` results in:
+Taking the contents of the second example above as the contents of the edit window and clicking `[Solve...]` results in:
 
     linear system of equations:
 
@@ -53,7 +53,7 @@ Taking the contents of the second example above as the contents of the textview 
      x[  1] :   1.0000000
      x[  2] :   2.0000000
 
-(where the formatted solution vector is simply written back to the same GtkTextBuffer and displayed in the textview below the coefficent matrix)
+(where the formatted solution vector is simply concatenated with the existing text written back to the edit control for display in the window)
 
 ### Compiling
 
