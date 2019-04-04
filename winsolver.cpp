@@ -348,9 +348,9 @@ void *szrealloc2 (void *ptr, const size_t ptrsz, size_t *nelem)
  */
 void writesolution (void)
 {
-	/* get number of characters in edit box */
+    /* get number of characters in edit box */
     LRESULT iTextSize = SendMessage(hWndEdit, EM_GETLIMITTEXT, 0, 0);
-	wchar_t *szText = new wchar_t[iTextSize],  /* allocate buffer */
+    wchar_t *szText = new wchar_t[iTextSize],  /* allocate buffer */
             *szSolv;    /* pointer to text + solution */
     char *cstr,         /* pointer to conversion to string */
         *p,             /* pointer to beginning of system of equations */
@@ -369,13 +369,15 @@ void writesolution (void)
     wcstombs_s (&ccvted, cstr, wlen, szText, _TRUNCATE);
     p = cstr;
 
-    /* advance start of first value in system of equations */
-    do {
-        if ( *p == '.' || *p == '-' || *p == '+' || isdigit (*p)) {
+    /* advance pointer to start of first value in system of equations */
+    while (*p) {
+        if (isdigit (*p) ||
+            ((*p == '.' || *p == '-' || *p == '+') && isdigit (p[1]))) {
             havevalue = TRUE;
             break;
         }
-    } while (*p++);
+        p++;
+    }
 
     if (havevalue) {
         /* fill matrix from values in buffer */
@@ -416,7 +418,7 @@ void writesolution (void)
                                     clen + 2 * RESULTSZ);
 
         /* append error text */
-        strcat (cstr, "\r\n\r\n ERROR Invalid Matrix Format\r\n");
+        strcat (cstr, "\r\n\r\n ERROR: Invalid Format or Matrix Not Found.\r\n");
 
         clen = strlen (cstr);           /* get new length of C-string */
         szSolv = new wchar_t[clen + 1]; /* allocate for conversion to wchar_t */
