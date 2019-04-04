@@ -1,0 +1,80 @@
+#include "resource.h"
+#include "windows.h"
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+
+LANGUAGE 9, 1
+IDI_WINSOLV ICON    "winsolver.ico"
+IDI_SMALL   ICON    "winsolver.ico"
+IDC_WINSOLV MENU
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Clear",  IDM_CLEAR
+        MENUITEM "&Solve",  IDM_SOLV
+        MENUITEM "E&xit",   IDM_EXIT
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&Help",       IDM_HELP
+        MENUITEM "&About ...",  IDM_ABOUT
+    END
+END
+IDC_WINSOLV ACCELERATORS
+BEGIN
+    "?",            IDM_ABOUT,              ASCII,  ALT
+    "/",            IDM_ABOUT,              ASCII,  ALT
+END
+IDD_ABOUTBOX DIALOGEX 120, 80, 170, 64
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Linear System Solver"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    ICON            IDI_WINSOLV,IDC_STATIC,14,14,21,20
+    LTEXT           "Linear System Solver, Version 0.0.1",IDC_STATIC,44,10,114,8,SS_NOPREFIX
+    LTEXT           "David C. Rankin, J.D.,P.E.",IDC_STATIC,44,19,114,8
+    LTEXT           "Copyright (C) 2019",IDC_STATIC,44,28,114,8
+    DEFPUSHBUTTON   "OK",IDOK,113,44,50,14,WS_GROUP
+END
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 163
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+END
+#endif
+
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE
+BEGIN
+    "resource.h\0"
+END
+2 TEXTINCLUDE
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+3 TEXTINCLUDE
+BEGIN
+    "\r\n"
+    "\0"
+END
+#endif
+
+STRINGTABLE
+BEGIN
+   IDC_WINSOLV      "Linear System Solver"
+   IDS_APP_TITLE    "Linear System Solver"
+END
+#endif
