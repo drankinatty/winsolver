@@ -7,7 +7,9 @@ Compile Resource File, then Build Application
 
 Or if you create separate ./bin and ./obj subdirectories
 
-  cl /nologo /W3 /wd4996 /Ox /Foobj/ /Febin/winsolver /Tp winsolver.cpp /Tc memrealloc.c /Tc mtrx_t.c user32.lib comctl32.lib gdi32.lib winsolver.res
+  rc /Foobj/winsolver.res winsolver.rc
+
+  cl /nologo /W3 /wd4996 /Ox /Foobj/ /Febin/winsolver /Tp winsolver.cpp /Tc memrealloc.c /Tc mtrx_t.c user32.lib comctl32.lib gdi32.lib obj/winsolver.res
 
 */
 

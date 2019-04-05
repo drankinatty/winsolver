@@ -4,8 +4,10 @@
 #define UNICODE
 #endif
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #define WIN32_LEAN_AND_MEAN   // Exclude rarely-used stuff from Windows headers
-// Windows Header Files:
+/* Windows Header Files */
 #include <windows.h>
 #include <commctrl.h>
 
@@ -16,7 +18,7 @@ extern "C" {
 #include "memrealloc.h"
 }
 
-// C RunTime Header Files
+/* C RunTime Header Files */
 #include <stdlib.h>
 #include <malloc.h>
 #include <memory.h>

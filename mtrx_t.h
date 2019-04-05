@@ -1,6 +1,10 @@
 #ifndef __mtrx_t_h__
 #define __mtrx_t_h__  1
 
+#if defined (_WIN32) || defined (_WIN64)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,12 +24,12 @@ typedef struct {        /* vector struct (not fully implemented) */
     T *vect;
 } vect_t;
 
-#define ROWSZ 8         /* initial allocation size */
+#define ROWSZ 8             /* initial allocation size */
 #define COLSZ 8
 
-#define MAXC 1024       /* max chars per-row to read */
+#define MAXC 1024           /* max chars per-row to read */
 
-#define T_FP_MAX  1.0e-20    /* floating-point values considered zero */
+#define T_FP_MAX  1.0e-20   /* floating-point values considered zero */
 #define T_FP_MIN -1.0e-20
 
 enum { ROWOP, COLOP };  /* row operation/column operation consts */
