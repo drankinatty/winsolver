@@ -356,7 +356,7 @@ void writesolution (void)
             *szSolv;    /* pointer to text + solution */
     char *cstr,         /* pointer to conversion to string */
         *p,             /* pointer to beginning of system of equations */
-        line[1024];     /* static line to build solution vector */
+        line[MAXC];     /* static line to build solution vector */
     size_t clen = 0, wlen = 0, ccvted = 0, wcvted = 0, i;
     bool havevalue = FALSE;
 
@@ -367,8 +367,10 @@ void writesolution (void)
     clen = wlen * 2;            /* double size for C-string */
     cstr = new char[clen];      /* allocate storage for C-string */
 
-    /* convert wide-char to C-string */
-    wcstombs_s (&ccvted, cstr, wlen, szText, _TRUNCATE);
+    /* convert wide-char to C-string, wlen + 1 to ensure final digit is
+     * included if edit control has no line-ending after final line.
+     */
+    wcstombs_s (&ccvted, cstr, wlen + 1, szText, _TRUNCATE);
     p = cstr;
 
     /* advance pointer to start of first value in system of equations */
