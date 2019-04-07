@@ -1,15 +1,45 @@
 /*
 Compile Resource File, then Build Application
 
+==> VS (cl.exe)
+
   rc /Fowinsolver.res winsolver.rc
 
-  cl /nologo /W3 /wd4996 /Ox /Fewinsolver /Tp winsolver.cpp /Tc memrealloc.c /Tc mtrx_t.c user32.lib comctl32.lib gdi32.lib winsolver.res
+  cl /nologo /W3 /Ox /Fewinsolver /Tp winsolver.cpp /Tc memrealloc.c /Tc mtrx_t.c user32.lib comctl32.lib gdi32.lib winsolver.res
 
 Or if you create separate ./bin and ./obj subdirectories
 
   rc /Foobj/winsolver.res winsolver.rc
 
   cl /nologo /W3 /wd4996 /Ox /Foobj/ /Febin/winsolver /Tp winsolver.cpp /Tc memrealloc.c /Tc mtrx_t.c user32.lib comctl32.lib gdi32.lib obj/winsolver.res
+
+==> MinGW 32-bit compile:
+
+  **note:** you must first edit MinGW/Include/commctl.h to change the default
+            target version, otherwise a number of constants needed by the
+            controls will not be defined, e.g. make the following changes:
+
+  locate (near the top):
+
+/+ define _WIN32_IE if you really want it +/
+#if 0
+#define _WIN32_IE	0x0300
+#endif
+
+  change to:
+
+#if 1
+#define _WIN32_IE	0x0500
+#endif
+
+See: https://stackoverflow.com/questions/27663558/opencv-win8-1-mingw32-source-code-error-tbbuttoninfo-was-not-declared-in-this
+
+Now proceed normally:
+
+  windres -o acceltstmg.o acceltst.rc
+
+  g++ -Wall -Ofast -o acceltstmg acceltst.cpp -lcomctl32 -luser32 -lgdi32 \
+  acceltstmg.o -Wl,-subsystem,windows
 
 */
 
@@ -31,12 +61,17 @@ Or if you create separate ./bin and ./obj subdirectories
 HINSTANCE   hInst;                      /* current instance of app */
 WCHAR szTitle[MAX_LOADSTRING];          /* The title bar text */
 WCHAR szWindowClass[MAX_LOADSTRING];    /* the main window class name */
+HWND hWndMain;                          /* main window handle */
 HWND hWndEdit;                          /* edit box instance */
 HWND hWndTool;                          /* toolbar instance */
 /* monospace font for edit box */
 HFONT hFont = CreateFont(13, 0, 0, 0, FW_DONTCARE, FALSE, FALSE, FALSE,
                 DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
+#if defined (__GNUC__) || defined (__MINGW32__)
+                ANTIALIASED_QUALITY, FIXED_PITCH, TEXT(L"DejaVu Sans Mono"));
+#else
                 CLEARTYPE_QUALITY, FIXED_PITCH, TEXT("DejaVu Sans Mono"));
+#endif
 HIMAGELIST g_hImageList = NULL;         /* imagelist for toolbar */
 
 /* function prototypes */
@@ -79,27 +114,26 @@ int APIENTRY WinMain (HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    // TODO: Place code here.
-
     /* initialize global strings */
-    LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_WINSOLV, szWindowClass, MAX_LOADSTRING);
-    MyRegisterClass(hInstance);
+    LoadStringW (hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
+    LoadStringW (hInstance, IDC_WINSOLV, szWindowClass, MAX_LOADSTRING);
+    MyRegisterClass (hInstance);
 
     /* initialize application / validate */
     if (!InitInstance (hInstance, nCmdShow)) {
         return FALSE;
     }
     /* load keyboard accelerators */
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WINSOLV));
+    HACCEL hAccelTable = LoadAccelerators (hInstance,
+                                            MAKEINTRESOURCE(IDC_WINSOLV));
 
     MSG msg;
 
     /* main message loop */
-    while (GetMessage(&msg, NULL, 0, 0)) {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg)) {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
+    while (GetMessage (&msg, NULL, 0, 0)) {
+        if (!TranslateAccelerator (hWndMain, hAccelTable, &msg)) {
+            TranslateMessage (&msg);
+            DispatchMessage (&msg);
         }
     }
 
@@ -107,7 +141,7 @@ int APIENTRY WinMain (HINSTANCE hInstance,
 }
 
 /* register the window class */
-ATOM MyRegisterClass(HINSTANCE hInstance)
+ATOM MyRegisterClass (HINSTANCE hInstance)
 {
     WNDCLASSEXW wcex;
 
@@ -133,13 +167,15 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     hInst = hInstance;
 
-    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+    HWND hWnd = CreateWindowW (szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, 640, 480, NULL, NULL, hInstance, NULL);
 
     if (!hWnd)  /* validate CreateWindow */
     {
         return FALSE;
     }
+
+    hWndMain = hWnd;
 
     ShowWindow(hWnd, nCmdShow);
 
@@ -153,29 +189,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
-    case WM_CREATE:
-        {
-        hWndTool = CreateSimpleToolbar(hWnd);
-        hWndEdit = CreateWindow (
-                    L"edit",           // The class name required is edit
-                    L"Linear System Solver", // Default text, styles below
-                    WS_VISIBLE | WS_CHILD | WS_HSCROLL | WS_VSCROLL|
-                    ES_LEFT | ES_MULTILINE | ES_AUTOHSCROLL,
-                    0,0,                    // the left and top co-ordinates
-                    0,0,                    // size with WM_SIZE message
-                    hWnd,                   // parent window handle
-                    (HMENU)IDM_EDIT,        // the ID of your editbox
-                    hInst,                  // the instance of your application
-                    NULL                    // extra bits you dont really need
+        case WM_CREATE: {
+            hWndTool = CreateSimpleToolbar(hWnd);
+            hWndEdit = CreateWindow (
+                        L"edit",                /* edit control class name */
+                        L"Linear System Solver",/* initial text in control */
+                        WS_VISIBLE | WS_CHILD | WS_HSCROLL | WS_VSCROLL|
+                        ES_LEFT | ES_MULTILINE | ES_AUTOHSCROLL,
+                        0,0, 0,0,               /* position and size */
+                        hWnd,                   /* parent window handle */
+                        (HMENU)IDM_EDIT,        /* editbox ID */
+                        hInst,                  /* application instance */
+                        NULL                    /* unneeded parameter */
+            );
 
-        );
-        /* set the font to Fixed (DejaVu Sans Mono) */
-        SendMessage (hWndEdit, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(true,0));
-	    SendMessage (hWndEdit, WM_SETTEXT, 0, (LPARAM)intro);
-        return 0;
+            /* set the font to Fixed (DejaVu Sans Mono) */
+            SendMessage (hWndEdit, WM_SETFONT, (WPARAM)hFont,
+                            MAKELPARAM(true,0));
+            SendMessage (hWndEdit, WM_SETTEXT, 0, (LPARAM)intro);
+
+            return 0;
         }
-    case WM_COMMAND:
-        {
+        case WM_COMMAND: {
             int wmId = LOWORD(wParam);
             /* parse the menu/toolbar selections */
             switch (wmId)
@@ -194,7 +229,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 SendMessage (hWndEdit, WM_SETTEXT, 0, (LPARAM)intro);
                 break;
             case IDM_SOLV:
-                // SendMessage (hWndEdit, WM_SETTEXT, 0, (LPARAM)L"Solving...");
+                /* get coefficient matrix from editbox, solve & display */
                 writesolution();
                 break;
             default:
@@ -202,41 +237,45 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
-	case WM_CLOSE:
-		DestroyWindow(hWnd);
-		break;
-	case WM_PAINT:
-        {
+
+        case WM_CLOSE:
+            DestroyWindow(hWnd);
+            break;
+
+        case WM_PAINT: {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: Add any drawing code that uses hdc here...
-            /* initial write before edit control added */
-            // TextOut (hdc, 5, 15, L"Hello Windows World!", 20);
             EndPaint(hWnd, &ps);
         }
         break;
-    case WM_SETFOCUS:
-        SetFocus(hWndEdit);
-        return 0;
-    case WM_SIZE:
-        /* make the edit control the size of the window's client area. */
-        MoveWindow(hWndTool,
-                    0, 0,                  // starting x- and y-coordinates
-                    LOWORD(lParam),        // width of client area
-                    40,                    // height of toolbar
-                    TRUE);                 // repaint window
-        MoveWindow(hWndEdit,
-                    0, 40,                 // starting x- and y-coordinates
-                    LOWORD(lParam),        // width of client area
-                    HIWORD(lParam) - 40,   // height of client area - toolbar
-                    TRUE);                 // repaint window
-        return 0;
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        break;
-    default:
-        return DefWindowProc(hWnd, message, wParam, lParam);
+
+        case WM_SETFOCUS:
+            SetFocus (hWndEdit);    /* maintain focus on edit window */
+            return 0;
+
+        case WM_SIZE:
+            /* make the edit control the size of the window's client area. */
+            MoveWindow(hWndTool,
+                        0, 0,                  /* starting x, y coordinates */
+                        LOWORD(lParam),        /* width of client area */
+                        40,                    /* height of toolbar */
+                        TRUE);                 /* repaint window */
+            MoveWindow(hWndEdit,
+                        0, 40,                 /* starting x, y coordinates */
+                        LOWORD(lParam),        /* width of client area */
+                        HIWORD(lParam) - 40,   /* height - toolbar */
+                        TRUE);                 /* repaint window */
+            return 0;
+
+        case WM_DESTROY:
+            PostQuitMessage(0);
+            break;
+
+        default:
+            return DefWindowProc(hWnd, message, wParam, lParam);
     }
+
     return 0;
 }
 
@@ -246,16 +285,16 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     UNREFERENCED_PARAMETER(lParam);
     switch (message)
     {
-    case WM_INITDIALOG:
-        return (INT_PTR)TRUE;
-
-    case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-        {
-            EndDialog(hDlg, LOWORD(wParam));
+        case WM_INITDIALOG:
             return (INT_PTR)TRUE;
-        }
-        break;
+
+        case WM_COMMAND:
+            if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+            {
+                EndDialog(hDlg, LOWORD(wParam));
+                return (INT_PTR)TRUE;
+            }
+            break;
     }
     return (INT_PTR)FALSE;
 }
@@ -389,8 +428,8 @@ void writesolution (void)
 
         /* solve system by gauss-jordan elimintation will full-pivoting */
         mtrx_solv_gaussj (m->mtrx, m->rows);    /* m->mtrx now contains
-                                                * inverse + solution vector
-                                                */
+                                                 * inverse + solution vector
+                                                 */
 
         /* realloc C-string to append Solution Vector */
         cstr = (char *)szrealloc (cstr, sizeof *cstr, clen,

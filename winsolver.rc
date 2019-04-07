@@ -4,27 +4,34 @@
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 
 LANGUAGE 9, 1
+
 IDI_WINSOLV ICON    "winsolver.ico"
 IDI_SMALL   ICON    "winsolver.ico"
+
 IDC_WINSOLV MENU
 BEGIN
     POPUP "&File"
     BEGIN
-        MENUITEM "&Clear",  IDM_CLEAR
-        MENUITEM "&Solve",  IDM_SOLV
-        MENUITEM "E&xit",   IDM_EXIT
+    MENUITEM "&Clear\tCtrl+E",      IDM_CLEAR
+    MENUITEM "&Write\tCtrl+S",      IDM_SOLV
+    MENUITEM "E&xit\tAlt+F4",       IDM_EXIT
     END
     POPUP "&Help"
     BEGIN
-        MENUITEM "&Help",       IDM_HELP
-        MENUITEM "&About ...",  IDM_ABOUT
+    MENUITEM "&Help\tCtrl+H",       IDM_HELP
+    MENUITEM "&About ...\tAlt+/",   IDM_ABOUT
     END
 END
+
 IDC_WINSOLV ACCELERATORS
 BEGIN
-    "?",            IDM_ABOUT,              ASCII,  ALT
-    "/",            IDM_ABOUT,              ASCII,  ALT
+    "e",    IDM_CLEAR,  CONTROL, VIRTKEY
+    "s",    IDM_SOLV,   CONTROL, VIRTKEY
+    "h",    IDM_HELP,   CONTROL, VIRTKEY
+    "?",    IDM_ABOUT,  ALT
+    "/",    IDM_ABOUT,  ALT
 END
+
 IDD_ABOUTBOX DIALOGEX 120, 80, 170, 64
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About Linear System Solver"
@@ -55,6 +62,7 @@ END
 BEGIN
     "resource.h\0"
 END
+
 2 TEXTINCLUDE
 BEGIN
     "#ifndef APSTUDIO_INVOKED\r\n"
@@ -65,6 +73,7 @@ BEGIN
     "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
     "\0"
 END
+
 3 TEXTINCLUDE
 BEGIN
     "\r\n"

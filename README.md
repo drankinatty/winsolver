@@ -55,7 +55,7 @@ Taking the contents of the second example above as the contents of the edit wind
 
 (where the formatted solution vector is simply concatenated with the existing text written back to the edit control for display in the window)
 
-### Compiling
+### Compiling with VS (cl.exe)
 
 Compiling this solver on windows is a simple matter of compiling the windows resource file and then compiling the application. The application can be built with VS10 or later (probably earlier versions as well) You have several options. If space isn't a concern and you want to install the full VS2017 compiler, you can install the VS2017 Community Edition. If you don't want a full VS install or don't have 8G of space to devote to the full install, then all you really need is the [Windows v7.1 SDK](https://www.microsoft.com/en-us/download/details.aspx?id=8279). While it may be antiquated by some standards, for simple windows applications, it provides the VS10 compiler and all needed libraries.
 
@@ -70,9 +70,43 @@ To buld the application issue:
     cl /nologo /W3 /wd4996 /Ox /Fewinsolver /Tp winsolver.cpp /Tc memrealloc.c
     /Tc mtrx_t.c user32.lib comctl32.lib gdi32.lib winsolver.res
 
-(the above is all one line)
+(the above is all one line - see top of winsolver.cpp for additional details)
 
 That's it. You will now find `winsolver.exe` in the present directory which can be run by simply typing `winsolver`. You can also create a shortcut and add it to your start menu as you see fit.
+
+### Compiling with MinGW
+
+You can also use MinGW or TDM-MinGW to compile the solver. However, to compile on Win32,
+
+    **note:** you must first edit MinGW/Include/commctrl.h to change the default
+              target version, otherwise a number of constants needed by the
+              controls will not be defined, e.g. make the following changes:
+
+For a bit of background, see: [MinGW 32-bit Error Buttons Not Declared](https://stackoverflow.com/questions/27663558/opencv-win8-1-mingw32-source-code-error-tbbuttoninfo-was-not-declared-in-this). The change to `commctrl.h` simply changes a define to enable the required constants, e.g.
+
+**locate (near the top):**
+
+    /* define _WIN32_IE if you really want it */
+    #if 0
+    #define _WIN32_IE   0x0300
+    #endif
+
+**change to:**
+
+    #if 1
+    #define _WIN32_IE   0x0500
+    #endif
+
+Now proceed normally compiling the resource file to object:
+
+    windres -o acceltstmg.o acceltst.rc
+
+Then linking the resource as a normal object file when building the solver:
+
+    g++ -Wall -Ofast -o acceltstmg acceltst.cpp -lcomctl32 -luser32 -lgdi32 \
+    acceltstmg.o -Wl,-subsystem,windows
+
+(**note:** the only drawback to using MinGW to build the solver is that the `CLEARTYPE_QUALITY` flag is not available to fonts within the edit-control, otherwise there is no difference)
 
 ### License/Copyright
 
