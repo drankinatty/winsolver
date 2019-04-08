@@ -3,7 +3,7 @@
 
 WinSolver is a simple but fast and capable linear system solver that is simply a minimal interface and muliline text control wrapped around a command-line solver to allow simple copy/paste of the coefficent matrix (including the constant vector as the last column) into the editor for solving. Basically it is an editor with a `[Solve...]` button.  A convenience that saves creating an input file with the coefficent matrix and constant vector before calling the solver from the command line. The underlying parser and solver is written entirely in C. (the `mtrx_t.[ch]` source files contain code for handling direct file input as well)
 
-The linear system solver uses Gauss-Jordan Elimination with full pivoting to solve a system of equations containing any number of unknowns up to the physical memory limits of your computer. See [Gaussian Elimination](https://en.wikipedia.org/wiki/Gaussian_elimination)
+The linear system solver uses Gauss-Jordan Elimination with full pivoting to solve a system of equations containing any number of unknowns up to the physical memory limits of your computer. See [Gaussian Elimination](https://en.wikipedia.org/wiki/Gaussian_elimination) Though the buffer for each line of the coefficent matrix parsed from the edit-control is limited to 8192 characters. If your needs are greater, just change the `MAXC` define at the top of `mtrx_t.h`.
 
 This project is a rewrite of [GtkSolver](https://github.com/drankinatty/gtksolver) to use a native Windows API interface for those running windows to eliminate the need to install Gtk+2.0 libraries and allow the program to run on any recent version of windows as a standalone program.
 
@@ -82,8 +82,6 @@ You can also use MinGW or TDM-MinGW to compile the solver. However, to compile o
               target version, otherwise a number of constants needed by the
               controls will not be defined, e.g. make the following changes:
 
-For a bit of background, see: [MinGW 32-bit Error Buttons Not Declared](https://stackoverflow.com/questions/27663558/opencv-win8-1-mingw32-source-code-error-tbbuttoninfo-was-not-declared-in-this). The change to `commctrl.h` simply changes a define to enable the required constants, e.g.
-
 **locate (near the top):**
 
     /* define _WIN32_IE if you really want it */
@@ -107,6 +105,8 @@ Then linking the resource as a normal object file when building the solver:
     acceltstmg.o -Wl,-subsystem,windows
 
 (**note:** the only drawback to using MinGW to build the solver is that the `CLEARTYPE_QUALITY` flag is not available to fonts within the edit-control, otherwise there is no difference)
+
+For a bit of background on this problem and solution, see: [MinGW 32-bit Error Buttons Not Declared](https://stackoverflow.com/questions/27663558/opencv-win8-1-mingw32-source-code-error-tbbuttoninfo-was-not-declared-in-this). The change to `commctrl.h` simply changes a define to enable the required constants, e.g.
 
 ### License/Copyright
 
