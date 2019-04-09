@@ -13,7 +13,7 @@ BEGIN
     POPUP "&File"
     BEGIN
     MENUITEM "&Clear\tCtrl+E",      IDM_CLEAR
-    MENUITEM "&Write\tCtrl+S",      IDM_SOLV
+    MENUITEM "&Solve\tCtrl+S",      IDM_SOLV
     MENUITEM "E&xit\tAlt+F4",       IDM_EXIT
     END
     POPUP "&Help"

@@ -11,11 +11,11 @@ Or if you create separate ./bin and ./obj subdirectories
 
   rc /Foobj/winsolver.res winsolver.rc
 
-  cl /nologo /W3 /wd4996 /Ox /Foobj/ /Febin/winsolver /Tp winsolver.cpp /Tc memrealloc.c /Tc mtrx_t.c user32.lib comctl32.lib gdi32.lib obj/winsolver.res
+  cl /nologo /W3 /Ox /Foobj/ /Febin/winsolver /Tp winsolver.cpp /Tc memrealloc.c /Tc mtrx_t.c user32.lib comctl32.lib gdi32.lib obj/winsolver.res
 
 ==> MinGW 32-bit compile:
 
-  **note:** you must first edit MinGW/Include/commctl.h to change the default
+  **note:** you must first edit MinGW/Include/commctrl.h to change the default
             target version, otherwise a number of constants needed by the
             controls will not be defined, e.g. make the following changes:
 
@@ -250,34 +250,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
 
-        case WM_NOTIFY: 
+        case WM_NOTIFY:
             switch (((LPNMHDR) lParam)->code) { /* handle tooltip for toolbar */
-                case TTN_GETDISPINFO: 
-                { 
-                    LPTOOLTIPTEXT lpttt = (LPTOOLTIPTEXT)lParam; 
+                case TTN_GETDISPINFO:
+                {
+                    LPTOOLTIPTEXT lpttt = (LPTOOLTIPTEXT)lParam;
                     // Set the instance of the module that contains the resource.
-                    lpttt->hinst = hInst; 
+                    lpttt->hinst = hInst;
                     UINT_PTR idButton = lpttt->hdr.idFrom;
-                    
-                    switch (idButton) { 
-                        case IDM_CLEAR: 
-                            lpttt->lpszText = MAKEINTRESOURCE(IDS_TIPS_CLEAR); 
-                            break; 
-                        case IDM_SOLV: 
-                            lpttt->lpszText = MAKEINTRESOURCE(IDS_TIPS_SOLV); 
-                            break; 
-                        case IDM_HELP: 
-                            lpttt->lpszText = MAKEINTRESOURCE(IDS_TIPS_HELP); 
-                            break; 
-                        case IDM_EXIT: 
-                            lpttt->lpszText = MAKEINTRESOURCE(IDS_TIPS_EXIT); 
-                            break; 
-                    } 
-                    break; 
-                } 
+
+                    switch (idButton) {
+                        case IDM_CLEAR:
+                            lpttt->lpszText = MAKEINTRESOURCE(IDS_TIPS_CLEAR);
+                            break;
+                        case IDM_SOLV:
+                            lpttt->lpszText = MAKEINTRESOURCE(IDS_TIPS_SOLV);
+                            break;
+                        case IDM_HELP:
+                            lpttt->lpszText = MAKEINTRESOURCE(IDS_TIPS_HELP);
+                            break;
+                        case IDM_EXIT:
+                            lpttt->lpszText = MAKEINTRESOURCE(IDS_TIPS_EXIT);
+                            break;
+                    }
+                    break;
+                }
             }
             return TRUE;
-        
+
         case WM_SETFOCUS:
             SetFocus (hWndEdit);    /* maintain focus on edit window */
             return 0;
