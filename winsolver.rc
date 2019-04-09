@@ -85,5 +85,9 @@ STRINGTABLE
 BEGIN
    IDC_WINSOLV      "Linear System Solver"
    IDS_APP_TITLE    "Linear System Solver"
+   IDS_TIPS_CLEAR   "Clear All Text From Window"
+   IDS_TIPS_SOLV    "Solve System of Equations Shown"
+   IDS_TIPS_HELP    "Display Initial Help Message"
+   IDS_TIPS_EXIT    "Exit Solver"
 END
 #endif

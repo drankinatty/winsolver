@@ -250,6 +250,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
 
+        case WM_NOTIFY: 
+            switch (((LPNMHDR) lParam)->code) { /* handle tooltip for toolbar */
+                case TTN_GETDISPINFO: 
+                { 
+                    LPTOOLTIPTEXT lpttt = (LPTOOLTIPTEXT)lParam; 
+                    // Set the instance of the module that contains the resource.
+                    lpttt->hinst = hInst; 
+                    UINT_PTR idButton = lpttt->hdr.idFrom;
+                    
+                    switch (idButton) { 
+                        case IDM_CLEAR: 
+                            lpttt->lpszText = MAKEINTRESOURCE(IDS_TIPS_CLEAR); 
+                            break; 
+                        case IDM_SOLV: 
+                            lpttt->lpszText = MAKEINTRESOURCE(IDS_TIPS_SOLV); 
+                            break; 
+                        case IDM_HELP: 
+                            lpttt->lpszText = MAKEINTRESOURCE(IDS_TIPS_HELP); 
+                            break; 
+                        case IDM_EXIT: 
+                            lpttt->lpszText = MAKEINTRESOURCE(IDS_TIPS_EXIT); 
+                            break; 
+                    } 
+                    break; 
+                } 
+            }
+            return TRUE;
+        
         case WM_SETFOCUS:
             SetFocus (hWndEdit);    /* maintain focus on edit window */
             return 0;
@@ -311,7 +339,8 @@ HWND CreateSimpleToolbar(HWND hWndParent)
     /* create the toolbar with flat/transparent buttons w/text on side */
     HWND hWndToolbar = CreateWindowEx(0, TOOLBARCLASSNAME, NULL,
                                       WS_CHILD | TBSTYLE_WRAPABLE |
-                                      TBSTYLE_LIST | TBSTYLE_FLAT,
+                                      TBSTYLE_LIST | TBSTYLE_FLAT |
+                                      TBSTYLE_TOOLTIPS,
                                       0, 0, 0, 0,
                                       hWndParent, NULL, hInst, NULL);
 

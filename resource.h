@@ -4,6 +4,10 @@
 //
 
 #define IDS_APP_TITLE			103
+#define IDS_TIPS_CLEAR          114
+#define IDS_TIPS_SOLV           115
+#define IDS_TIPS_HELP           116
+#define IDS_TIPS_EXIT           117
 
 #define IDR_MAINFRAME			128
 #define IDD_WINSOLV_DIALOG      102
