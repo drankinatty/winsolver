@@ -189,11 +189,14 @@ T *parse_dbl_array (char *buf, size_t *nelem)
         errno = 0;          /* reset errno before each conversion */
         if (n == *nelem)    /* check if realloc required */
             array = xrealloc_x2 (array, sizeof *array, nelem);
-        /* skip any non-digit characters */
+        /* skip any non-digit characters
+         *
+         * TODO: update to check digit after "-." (e.g. "-.4")
+         */
         while (*nptr && ((*nptr != '-'  && *nptr != '+' && *nptr != '.' &&
                     (*nptr < '0' || '9' < *nptr)) ||
                     ((*nptr == '-' || *nptr == '+' || *nptr == '.') &&
-                    (*(nptr+1) < '0' || '9' < *(nptr+1)))))
+                    (*(nptr+1) != '.' && (*(nptr+1) < '0' || '9' < *(nptr+1))))))
             nptr++;
 
         if (!*nptr) /* check if at end of buf */
