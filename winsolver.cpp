@@ -444,7 +444,8 @@ void writesolution (void)
     /* advance pointer to start of first value in system of equations */
     while (*p) {
         if (isdigit (*p) ||
-            ((*p == '.' || *p == '-' || *p == '+') && isdigit (p[1]))) {
+            ((*p == '.' || *p == '-' || *p == '+') && isdigit (p[1])) ||
+            ((*p == '-' || *p == '+') && p[1] == '.' && p[2] && isdigit(p[2]))) {
             havevalue = TRUE;
             break;
         }

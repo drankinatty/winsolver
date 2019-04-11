@@ -41,7 +41,7 @@ or
      2x +3y +3z = 15
      5x -3y +1z = 14
 
-(**note:** the only limitation is the `'+'` or `'-'` must be the character immediately before the number (e.g. attached to the number). For example if you entered `3x + 2y - 4z = 3` the coefficient for `'z'` would be taken as `'4'` instead of `'-4'`)
+(**note:** the only limitation is the `'+'` or `'-'` must be the character immediately before the number (e.g. attached to the number). For example if you entered `3x + 2y - 4z = 3`, the coefficient for `'z'` would be taken as `'4'` instead of `'-4'`)
 
 Clicking `[Help]` clears the buffer and redisplays the initial help message.
 
